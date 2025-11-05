@@ -1,0 +1,17 @@
+{
+  "name": "platzi_curso_expressjs",
+  "version": "1.0.0",
+  "description": "curso express.js",
+  "keywords": [],
+  "license": "ISC",
+  "author": "Juan Sebastián Torres",
+  "type": "\u001b[AMIT",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {}
+}
