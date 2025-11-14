@@ -21,7 +21,8 @@ app.get('/', (req, res) => {
 });
 
 
-// Escuchar la app
+// Escuchar la app 
 app.listen(PORT, () => {
+    console.log('Nuestra aplicacion esta funcionando!');
     console.log('Nuestra aplicacion esta funcionando!');
 });
