@@ -1,3 +1,6 @@
+// Configuracion para que lea las variables de entorno de .env
+require('dotenv').config();
+
 // Importar expres
 const express = require('express');
 const app = express();
@@ -9,6 +12,9 @@ const app = express();
 // obteniéndolo de las variables de entorno del sistema operativo o de un archivo .env
 // Se debe crear el archivo env con la info del puerto
 const PORT = process.env.PORT || 3000;
+console.log(PORT);
+
+
 
 // Constuir la ruta por defecto la raiz ('/')
 app.get('/', (req, res) => {
@@ -23,5 +29,5 @@ app.get('/', (req, res) => {
 
 // Escuchar la app
 app.listen(PORT, () => {
-    console.log('Nuestra aplicacion esta funcionando!');
+    console.log(`Servidor: http://localhost:${PORT}`);
 });

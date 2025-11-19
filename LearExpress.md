@@ -22,3 +22,13 @@
 ## Escuchar los cambios de app.js
     en consola correr
     node --watch app.js
+
+    como es repetitivo se puede configurar en package.json en la seccion "scripts"
+    "dev": "node --watch app.js",
+
+    lo ejecutamos con "npm run dev"
+
+
+## Intalar dotenv
+    Para que pueda reconocer las variables de entorno establecidas en .env
+    npm install dotenv
