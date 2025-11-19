@@ -27,7 +27,13 @@ app.get('/', (req, res) => {
 });
 
 
-// Escuchar la app
+// Escuchar la app 
 app.listen(PORT, () => {
+<<<<<<< HEAD
     console.log(`Servidor: http://localhost:${PORT}`);
 });
+=======
+    console.log('Nuestra aplicacion esta funcionando!');
+    console.log('Nuestra aplicacion esta funcionando!');
+});
+>>>>>>> 9b918784a16666cd949c37bf795d8be29dab41c2
