@@ -2,7 +2,7 @@
 require("dotenv").config();
 
 // validaciones para usuario
-const {validacionesUsuario} = require('./validacionesUsuarios'); 
+const { validacionesUsuario } = require("./validacionesUsuarios");
 
 // Importar expres
 const express = require("express");
@@ -73,7 +73,7 @@ app.post("/data", (req, res) => {
   });
 });
 
-// Obteniendo los usuarios desde el archivo
+// GET /users Obteniendo los usuarios desde el archivo
 app.get("/users", (req, res) => {
   //leer el contenido del archivo con fs.
   fs.readFile(usuariosFile, "utf-8", (err, data) => {
@@ -88,57 +88,62 @@ app.get("/users", (req, res) => {
   });
 });
 
+// POST /users Crear usuario
 app.post("/users", (req, res) => {
   // captura los datos del form
   const nuevoUsuario = req.body;
 
-  // verificacion de los datos que no vengan vacios
+  // verificacion inicial de los datos
   if (
     !nuevoUsuario ||
     nuevoUsuario.length === 0 ||
     nuevoUsuario === undefined
   ) {
-    res
+    return res
       .status(500)
-      .json({ error: "Información incompleta para realizar el registro" });
-  } else if (nuevoUsuario.name.length < 3 || nuevoUsuario.email.length < 12) {
-    // verificar que los campos tengan la longitud minima
-    res.status(500).json({
-      error:
-        "Los datos no cumplen con la longitud minima para realizar el registro",
-    });
-  } else {
-    // Si no hay errores en los datos capturados -> leer el archivo donde se almacena la data
-    fs.readFile(usuariosFile, "utf-8", (err, data) => {
-      if (err) {
-        return res.status(500).json({ err: "Error al obtener la data" });
-      } else {
-        // Retornar la data en formato JSON
-        const users = JSON.parse(data);
-        // Gestionar un contador de ID para que no se repita el ID en ningun registro
-        let contadorId = users.length + 1;
-        // Construir el usuario nuevo
-        const usuarioCreado = {
-          id: contadorId,
-          name: nuevoUsuario.name,
-          email: nuevoUsuario.email,
-        };
+      .json({ error: "Faltan información en el formulario" });
+  }
+
+  // Si no hay errores en los datos capturados -> leer el archivo donde se almacena la data
+  fs.readFile(usuariosFile, "utf-8", (err, data) => {
+    if (err) {
+      return res.status(500).json({ err: "Error al obtener la data" });
+    } else {
+      // Retornar la data en formato JSON
+      const users = JSON.parse(data);
+
+      const usuarioCreado = {
+        id: Number(nuevoUsuario.id),
+        name: nuevoUsuario.name,
+        email: nuevoUsuario.email,
+      };
+
+      // Gestionar un contador de ID para que no se repita el ID en ningun registro
+      // let contadorId = users.length + 1;
+
+      // Ejecutar VALIDACIONES del modulo de validacionesUsuarios
+      const isNuevoUsuarioValido = validacionesUsuario(usuarioCreado, users);
+
+      if (isNuevoUsuarioValido.isValid) {
         // agregar usuario al array de usuarios obtenido de la data
         users.push(usuarioCreado);
-
-        // convertir el array a string para poderlo reescribir en el archivo .json
-        const usuariosActualizados = "\n" + JSON.stringify(users, null, 2);
-        // reescribir el archivo con el array actualizado 
-        fs.writeFileSync(usuariosFile, usuariosActualizados, "utf-8");
-
-        // retornar la respuesta de exito con el nuevo usuario
-        return res.status(201).json({
-          usuarioCreado,
-        });
-
+      } else {
+        return res.status(500).json({ errores: isNuevoUsuarioValido.errores });
       }
-    });
-  }
+      // Construir el usuario nuevo
+
+      // convertir el array a string para poderlo reescribir en el archivo .json
+      const usuariosActualizados = "\n" + JSON.stringify(users, null, 2);
+      // reescribir el archivo con el array actualizado
+      fs.writeFileSync(usuariosFile, usuariosActualizados, "utf-8");
+
+      // retornar la respuesta de exito con el nuevo usuario
+      return res.status(201).json({
+        mesagge: "usuario agregado",
+        usuarioCreado,
+      });
+    }
+  });
 });
 
 // Escuchar la app

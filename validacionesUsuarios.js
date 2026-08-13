@@ -3,7 +3,7 @@
 // Validación de correo electrónico mediante Regex
 function validacionEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  console.log("validacion correo", emailRegex.test(email));
+//   console.log("validacion correo", emailRegex.test(email));
   return emailRegex.test(email);
 }
 
@@ -48,39 +48,39 @@ function validacionesUsuario(user, users) {
   };
 }
 
-// data prueba
-const users = [
-  {
-    id: 1,
-    name: "John Doe",
-    email: "johndoe@example.com",
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    email: "janesmith@example.com",
-  },
-  {
-    id: 3,
-    name: "Juan",
-    email: "juan@mail.com",
-  },
-  {
-    id: 4,
-    name: "Sebas",
-    email: "sebas@mail.com",
-  },
-];
+// // // data prueba
+// const users = [
+//   {
+//     id: 1,
+//     name: "John Doe",
+//     email: "johndoe@example.com",
+//   },
+//   {
+//     id: 2,
+//     name: "Jane Smith",
+//     email: "janesmith@example.com",
+//   },
+//   {
+//     id: 3,
+//     name: "Juan",
+//     email: "juan@mail.com",
+//   },
+//   {
+//     id: 4,
+//     name: "Sebas",
+//     email: "sebas@mail.com",
+//   },
+// ];
 
-// usuario prueba
-const user = {
-  id: 5,
-  name: "js",
-  email: "j@m.c",
-};
+// // usuario prueba
+// const user = {
+//   id: 5,
+//   name: "js",
+//   email: "j@m.c",
+// };
 
-// Pruebas
-validacionesUsuario(user, users);
+// // Pruebas
+// validacionesUsuario(user, users);
 
 
 
