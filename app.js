@@ -1,39 +1,147 @@
 // Configuracion para que lea las variables de entorno de .env
-require('dotenv').config();
+require("dotenv").config();
+
+// validaciones para usuario
+const {validacionesUsuario} = require('./validacionesUsuarios'); 
 
 // Importar expres
-const express = require('express');
+const express = require("express");
+
+// Trabajar con archivos
+const fs = require("fs");
+// Manejo de rutas
+const path = require("path");
+// Archivo listo para usar
+const usuariosFile = path.join(__dirname, "usuarios.json");
+
+// Incorporar body parser
+const bodyParser = require("body-parser");
+const { log } = require("console");
+
 const app = express();
+
+// Middleware para parsear la informacion que viene del cliente
+// implementando body parser
+app.use(bodyParser.json());
+// bodyparser para formularios
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Puerto a utilizar por defecto el 3000
 // const PORT = 3000;
-
-// process.env.PORT se utiliza para acceder al número de puerto de una aplicación web, 
+// process.env.PORT se utiliza para acceder al número de puerto de una aplicación web,
 // obteniéndolo de las variables de entorno del sistema operativo o de un archivo .env
 // Se debe crear el archivo env con la info del puerto
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 console.log(PORT);
 
-
-
 // Constuir la ruta por defecto la raiz ('/')
-app.get('/', (req, res) => {
-    // Respuesta
-    res.send(`
-     <h1>Curso Express.js</h1> 
-     <p>Esto es una aplicación node.js con express.js V5</p> 
-     <p>Corre en el puerto ${PORT}</p>
+app.get("/", (req, res) => {
+  // Respuesta
+  res.send(`
+        <h1>Curso Express.js</h1> 
+        <p>Esto es una aplicación node.js con express.js V5</p> 
+        <p>Corre en el puerto: ${PORT}</p>
+        <p>Hola</p>
+                
     `);
 });
 
+// Ejemplo FORM
+app.post("/form", (req, res) => {
+  const name = req.body.nombre || "Name no especificado";
+  const mail = req.body.mail || "Mail no especificado";
 
-// Escuchar la app 
+  res.json({
+    mesagge: "datos recibidos",
+    data: { name, mail },
+  });
+});
+
+// Ejemplo con validaciones
+app.post("/data", (req, res) => {
+  const data = req.body;
+
+  if (!data || Object.keys(data).length === 0) {
+    res.status(400).json({
+      error: "No hay información en data",
+    });
+  }
+
+  res.status(200).json({
+    mesagge: "Procesando la data",
+    data,
+  });
+});
+
+// Obteniendo los usuarios desde el archivo
+app.get("/users", (req, res) => {
+  //leer el contenido del archivo con fs.
+  fs.readFile(usuariosFile, "utf-8", (err, data) => {
+    if (err) {
+      return res.status(500).json({ error: "error en la lectura del archivo" });
+      console.log("ocurrio un error en la lectura del archivo");
+    } else {
+      const users = JSON.parse(data);
+      res.json(users);
+      console.log(users);
+    }
+  });
+});
+
+app.post("/users", (req, res) => {
+  // captura los datos del form
+  const nuevoUsuario = req.body;
+
+  // verificacion de los datos que no vengan vacios
+  if (
+    !nuevoUsuario ||
+    nuevoUsuario.length === 0 ||
+    nuevoUsuario === undefined
+  ) {
+    res
+      .status(500)
+      .json({ error: "Información incompleta para realizar el registro" });
+  } else if (nuevoUsuario.name.length < 3 || nuevoUsuario.email.length < 12) {
+    // verificar que los campos tengan la longitud minima
+    res.status(500).json({
+      error:
+        "Los datos no cumplen con la longitud minima para realizar el registro",
+    });
+  } else {
+    // Si no hay errores en los datos capturados -> leer el archivo donde se almacena la data
+    fs.readFile(usuariosFile, "utf-8", (err, data) => {
+      if (err) {
+        return res.status(500).json({ err: "Error al obtener la data" });
+      } else {
+        // Retornar la data en formato JSON
+        const users = JSON.parse(data);
+        // Gestionar un contador de ID para que no se repita el ID en ningun registro
+        let contadorId = users.length + 1;
+        // Construir el usuario nuevo
+        const usuarioCreado = {
+          id: contadorId,
+          name: nuevoUsuario.name,
+          email: nuevoUsuario.email,
+        };
+        // agregar usuario al array de usuarios obtenido de la data
+        users.push(usuarioCreado);
+
+        // convertir el array a string para poderlo reescribir en el archivo .json
+        const usuariosActualizados = "\n" + JSON.stringify(users, null, 2);
+        // reescribir el archivo con el array actualizado 
+        fs.writeFileSync(usuariosFile, usuariosActualizados, "utf-8");
+
+        // retornar la respuesta de exito con el nuevo usuario
+        return res.status(201).json({
+          usuarioCreado,
+        });
+
+      }
+    });
+  }
+});
+
+// Escuchar la app
 app.listen(PORT, () => {
-<<<<<<< HEAD
-    console.log(`Servidor: http://localhost:${PORT}`);
+  console.log(`Corriendo en el servidor: http://localhost:${PORT}`);
 });
-=======
-    console.log('Nuestra aplicacion esta funcionando!');
-    console.log('Nuestra aplicacion esta funcionando!');
-});
->>>>>>> 9b918784a16666cd949c37bf795d8be29dab41c2

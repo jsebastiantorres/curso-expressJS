@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "body-parser": "^2.2.1",
     "dotenv": "^17.2.3",
     "express": "^5.1.0"
   },
@@ -16,5 +17,8 @@
     "['expressjs']"
   ],
   "author": "Juan Sebastián Torres",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
 }
