@@ -3,7 +3,7 @@
 // Validación de correo electrónico mediante Regex
 function validacionEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-//   console.log("validacion correo", emailRegex.test(email));
+  //   console.log("validacion correo", emailRegex.test(email));
   return emailRegex.test(email);
 }
 
@@ -48,6 +48,15 @@ function validacionesUsuario(user, users) {
   };
 }
 
+function buscarUsuarioID(id, users) {
+  const userEncontrado = users.find((e) => e.id === id);
+  if (!userEncontrado) {
+    return { err: `No existe usuario con el id: ${id}` };
+  }
+
+  return userEncontrado;
+}
+
 // // // data prueba
 // const users = [
 //   {
@@ -82,7 +91,5 @@ function validacionesUsuario(user, users) {
 // // Pruebas
 // validacionesUsuario(user, users);
 
-
-
 // exportar el modulo para probarlo
-module.exports = { validacionesUsuario };
+module.exports = { validacionesUsuario, buscarUsuarioID };

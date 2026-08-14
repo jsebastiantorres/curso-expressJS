@@ -2,7 +2,10 @@
 require("dotenv").config();
 
 // validaciones para usuario
-const { validacionesUsuario } = require("./validacionesUsuarios");
+const {
+  validacionesUsuario,
+  buscarUsuarioID,
+} = require("./validacionesUsuarios");
 
 // Importar expres
 const express = require("express");
@@ -25,6 +28,7 @@ const app = express();
 app.use(bodyParser.json());
 // bodyparser para formularios
 app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(express.urlencoded({ extended: true }));
 
 // Puerto a utilizar por defecto el 3000
 // const PORT = 3000;
@@ -75,6 +79,8 @@ app.post("/data", (req, res) => {
 
 // GET /users Obteniendo los usuarios desde el archivo
 app.get("/users", (req, res) => {
+  console.log("get normal");
+
   //leer el contenido del archivo con fs.
   fs.readFile(usuariosFile, "utf-8", (err, data) => {
     if (err) {
@@ -85,6 +91,24 @@ app.get("/users", (req, res) => {
       res.json(users);
       console.log(users);
     }
+  });
+});
+
+// GET / Obtener usuario por ID
+app.get("/users/:id", (req, res) => {
+  const idBuscado = Number(req.params.id);
+  console.log("id buscado", idBuscado);
+
+  fs.readFile(usuariosFile, "utf-8", (err, data) => {
+    if (err) {
+      return res.status(500).json({ mesagge: "error al optener los datos" });
+    }
+    const users = JSON.parse(data);
+
+    const idEncontrado = buscarUsuarioID(idBuscado, users);
+
+    console.log("el usuario con el ID es:", idEncontrado);
+    return res.status(200).json({idEncontrado});
   });
 });
 
