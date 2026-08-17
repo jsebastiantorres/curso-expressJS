@@ -95,22 +95,22 @@ app.get("/users", (req, res) => {
 });
 
 // GET / Obtener usuario por ID
-app.get("/users/:id", (req, res) => {
-  const idBuscado = Number(req.params.id);
-  console.log("id buscado", idBuscado);
+// app.get("/users/:id", (req, res) => {
+//   const idBuscado = Number(req.params.id);
+//   console.log("id buscado", idBuscado);
 
-  fs.readFile(usuariosFile, "utf-8", (err, data) => {
-    if (err) {
-      return res.status(500).json({ mesagge: "error al optener los datos" });
-    }
-    const users = JSON.parse(data);
+//   fs.readFile(usuariosFile, "utf-8", (err, data) => {
+//     if (err) {
+//       return res.status(500).json({ mesagge: "error al optener los datos" });
+//     }
+//     const users = JSON.parse(data);
 
-    const idEncontrado = buscarUsuarioID(idBuscado, users);
+//     const idEncontrado = buscarUsuarioID(idBuscado, users);
 
-    console.log("el usuario con el ID es:", idEncontrado);
-    return res.status(200).json({idEncontrado});
-  });
-});
+//     console.log("el usuario con el ID es:", idEncontrado);
+//     return res.status(200).json(idEncontrado);
+//   });
+// });
 
 // POST /users Crear usuario
 app.post("/users", (req, res) => {
@@ -167,6 +167,55 @@ app.post("/users", (req, res) => {
         usuarioCreado,
       });
     }
+  });
+});
+
+// Actualizar usuario
+app.put("/users/:id", (req, res) => {
+  const usuarioId = Number(req.params.id);
+  const userUpdate = req.body;
+
+  // verificacion de body
+  if (!userUpdate || userUpdate.length === 0 || userUpdate === undefined) {
+    console.log("la peticion sin ID datos para actualizar el usuario");
+    return res
+      .status(500)
+      .json({ mesagge: "la peticion sin ID datos para actualizar el usuario" });
+  }
+
+  // Buscar la data
+  fs.readFile(usuariosFile, "utf-8", (err, data) => {
+    if (err) {
+      return res.status(500).json({ mesagge: "Error al obtener la data" });
+    }
+
+    const usuarios = JSON.parse(data);
+
+    // Buscar el usuario, llamar la funcion buscarUsuarioID
+    const usuarioEditar = buscarUsuarioID(usuarioId, usuarios);
+    console.log("usuario encontrado: ", usuarioEditar);
+
+    // Actualiza el usuario especifico y mantiene el listado
+    // Si los IDs coinciden superpone userUpdate, si no conserva el usuario original
+    const usuariosUpdate = usuarios.map((usuario) =>
+      usuario.id === usuarioId ? { ...usuario, ...userUpdate } : usuario,
+    );
+
+    // console.log(usuariosUpdate);
+
+    // Reescribir la lista y guardar
+    // convertir el array actualizado a string para poderlo reescribir en el archivo .json
+    const usuariosUpdateParseados =
+      "\n" + JSON.stringify(usuariosUpdate, null, 2);
+    fs.writeFileSync(usuariosFile, usuariosUpdateParseados, "utf-8");
+
+    // console.log(data);
+    res.json({
+      mesagge: "El usuario se ha actualizado:",
+      datosAnteriores: usuarioEditar,
+      datosNuevos: userUpdate,
+      idUpdate: usuarioId,
+    });
   });
 });
 
