@@ -44,5 +44,13 @@
     npm install body-parser
 
     
+
+
+# CRUD Verbos y definiciones
+POST (Create)
+GET (Read)
+PUT (Update)
+PATCH (Update)
+DELETE (Delete)
     
 

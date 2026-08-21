@@ -19,7 +19,7 @@ const usuariosFile = path.join(__dirname, "usuarios.json");
 
 // Incorporar body parser
 const bodyParser = require("body-parser");
-const { log } = require("console");
+const { log, error } = require("console");
 
 const app = express();
 
@@ -95,22 +95,22 @@ app.get("/users", (req, res) => {
 });
 
 // GET / Obtener usuario por ID
-// app.get("/users/:id", (req, res) => {
-//   const idBuscado = Number(req.params.id);
-//   console.log("id buscado", idBuscado);
+app.get("/users/:id", (req, res) => {
+  const idBuscado = Number(req.params.id);
+  console.log("id buscado", idBuscado);
 
-//   fs.readFile(usuariosFile, "utf-8", (err, data) => {
-//     if (err) {
-//       return res.status(500).json({ mesagge: "error al optener los datos" });
-//     }
-//     const users = JSON.parse(data);
+  fs.readFile(usuariosFile, "utf-8", (err, data) => {
+    if (err) {
+      return res.status(500).json({ mesagge: "error al optener los datos" });
+    }
+    const users = JSON.parse(data);
 
-//     const idEncontrado = buscarUsuarioID(idBuscado, users);
+    const idEncontrado = buscarUsuarioID(idBuscado, users);
 
-//     console.log("el usuario con el ID es:", idEncontrado);
-//     return res.status(200).json(idEncontrado);
-//   });
-// });
+    console.log("el usuario con el ID es:", idEncontrado);
+    return res.status(200).json(idEncontrado);
+  });
+});
 
 // POST /users Crear usuario
 app.post("/users", (req, res) => {
@@ -215,6 +215,49 @@ app.put("/users/:id", (req, res) => {
       datosAnteriores: usuarioEditar,
       datosNuevos: userUpdate,
       idUpdate: usuarioId,
+    });
+  });
+});
+
+app.delete("/users/:id", (req, res) => {
+  const userIdEliminar = Number(req.params.id);
+  console.log(userIdEliminar);
+
+  // buscamos la data
+  fs.readFile(usuariosFile, "utf-8", (err, data) => {
+    if (err) {
+      return res.status(500).json({ error: "No se pudo leer la data" });
+    }
+
+    // pasamos a JSON la data encontrada
+    const listaUsuarios = JSON.parse(data);
+    console.log(listaUsuarios);
+
+    // buscamos el user dentro de la data y lo eliminamos con slice
+    // usuario a eliminar
+    const usuarioAEliminar = buscarUsuarioID(userIdEliminar, listaUsuarios);
+
+    // encontrar el index del user a eliminar
+    const indexUsuarioEliminar = listaUsuarios.findIndex(
+      (e) => e.id === userIdEliminar,
+    );
+
+    // eliminar el usuario
+    if (indexUsuarioEliminar !== -1) {
+      listaUsuarios.splice(indexUsuarioEliminar, 1);
+    }
+
+    // parseamos a STRING el listado actualizado, guardamos y sobreescribimos la data
+    const nuevoListadoUsuariosParseados =
+      "\n" + JSON.stringify(listaUsuarios, null, 2);
+
+    fs.writeFileSync(usuariosFile, nuevoListadoUsuariosParseados, "utf-8");
+
+    // retornamos una respuesta
+    res.status(200).json({
+      mesagge: "Se elimino el usuario",
+      userEliminado: usuarioAEliminar,
+      dataActualizada: listaUsuarios,
     });
   });
 });

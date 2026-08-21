@@ -1,4 +1,3 @@
-
 [
   {
     "id": 1,
@@ -15,11 +14,7 @@
     "name": "Juan",
     "email": "juan@mail.com"
   },
-  {
-    "id": 4,
-    "name": "Sebas",
-    "email": "sebas@mail.com"
-  },
+  { "id": 4, "name": "Sebas", "email": "sebas@mail.com" },
   {
     "id": 5,
     "name": "Tati",
@@ -29,15 +24,5 @@
     "id": 6,
     "name": "ta",
     "email": "tati@m.c"
-  },
-  {
-    "id": 7,
-    "name": "sharick",
-    "email": "sharick@m.c"
-  },
-  {
-    "id": 8,
-    "name": "oc",
-    "email": "oc@m.c"
   }
 ]
